@@ -1,35 +1,63 @@
-import React, { useState } from "react";
-import {createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, TwitterAuthProvider} from 'firebase/auth'
+import React, { useEffect, useState } from "react";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, TwitterAuthProvider} from "firebase/auth";
 import { auth, db } from "../firebase";
-import { useNavigate,Link} from "react-router-dom";
-import { collection, addDoc } from "firebase/firestore";
+import { useNavigate, Link } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 
 const SignUp = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("")
-    const navigate = useNavigate()
-    const handelSignUp = async (e) => {
-      e.preventDefault();
-      await createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          //Sigined in
-          const user = userCredential.user;
-          console.log(user);
-          //adding data to firebase store
-          const userReference = addDoc(collection(db, "usernames"), {
-            email: user.email,
-          });
-          console.log(
-            "data was added sucessfully to fire store",
-            userReference.id
-          );
-          //navgiate to login page
-          navigate("/signin");
-        })
-        .catch((error) => {
-          console.log(error);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [userSigIn, setUserSignIn] = useState(null);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  //geting user info uid
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUserSignIn(uid);
+      } else {
+        console.log("logout");
+      }
+    });
+  }, []);
+
+  console.log(userSigIn);
+
+  const handelSignUp = async (e) => {
+    e.preventDefault();
+
+    // Vérification de l'UID avant de créer le compte
+    const querySnapshot = await getDocs(query(collection(db, "usernames"), where("email", "==", email)));
+    if (!querySnapshot.empty) {
+      // L'UID existe déjà, informer l'utilisateur
+      setError("Cet email est déjà utilisé. Veuillez en choisir un autre.");
+      return;
+    }
+
+    // L'UID n'existe pas encore, créer le compte utilisateur
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        //Sigined in
+        const user = userCredential.user;
+        console.log(user);
+        // Ajout des données dans la collection "usernames" de la base de données Firestore
+        const userReference = addDoc(collection(db, "usernames"), {
+          email: user.email,
         });
-    };
+        console.log(
+          "data was added sucessfully to fire store",
+          userReference.id
+        );
+        // Navigation vers la page de connexion
+        navigate("/signin");
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  };
 
     const handleGoogleSignUp = () => {
       const provider = new GoogleAuthProvider();
@@ -64,6 +92,7 @@ const SignUp = () => {
   return (
     <div>
       <h2>Sign up</h2>
+      {error && <p style={{color:'red' }}>{error}</p>}
       <form action="#">
         <div>
           <label htmlFor="email">Email</label>
