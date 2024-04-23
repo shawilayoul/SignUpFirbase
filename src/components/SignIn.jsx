@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link} from "react-router-dom";
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,6 +40,7 @@ const SignIn = () => {
         </div>
         <button type="submit" onClick={handelSignIn}>Sign In</button>
       </form>
+      <Link to='/signup'><p>Do not have an account signUp </p></Link> 
     </div>
   );
 };
