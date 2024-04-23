@@ -1,26 +1,35 @@
 import React, { useState } from "react";
 import {createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, TwitterAuthProvider} from 'firebase/auth'
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { useNavigate,Link} from "react-router-dom";
+import { collection, addDoc } from "firebase/firestore";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
     const navigate = useNavigate()
-    const handelSignUp = async(e)=>{
-     e.preventDefault()
-     await createUserWithEmailAndPassword(auth ,email,password).
-      then((userCredential)=>{
-        //Sigined in
-        const user = userCredential.user;
-        console.log(user)
-        //navgiate to login page
-        navigate('/signin')
-      })
-      .catch((error)=>{
-        console.log(error.meassage)
-      })
-    }
+    const handelSignUp = async (e) => {
+      e.preventDefault();
+      await createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          //Sigined in
+          const user = userCredential.user;
+          console.log(user);
+          //adding data to firebase store
+          const userReference = addDoc(collection(db, "usernames"), {
+            email: user.email,
+          });
+          console.log(
+            "data was added sucessfully to fire store",
+            userReference.id
+          );
+          //navgiate to login page
+          navigate("/signin");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
 
     const handleGoogleSignUp = () => {
       const provider = new GoogleAuthProvider();
