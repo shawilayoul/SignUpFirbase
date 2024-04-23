@@ -3,16 +3,17 @@ import { collection, addDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { useNavigate, Link } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
+//import { onAuthStateChanged } from "firebase/auth";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userSigIn, setUserSignIn] = useState(null);
+  //const [userSigIn, setUserSignIn] = useState(null);
+  const [showError,setShowError] = useState(false)
   const navigate = useNavigate();
 
   //geting user info uid
-  useEffect(() => {
+ /* useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
@@ -22,8 +23,8 @@ const SignUp = () => {
       }
     });
   }, []);
-
-  //console.log(userSigIn);
+*/
+ // console.log(userSigIn);
 
   const handelSignUp = async (e) => {
     e.preventDefault();
@@ -32,6 +33,7 @@ const SignUp = () => {
         //Sigined in
         const user = userCredential.user;
         console.log(user);
+
         //adding user email  to firebase store
         const userReference = addDoc(collection(db, "usernames"), {
           email: user.email,
@@ -44,12 +46,16 @@ const SignUp = () => {
         navigate("/signin");
       })
       .catch((error) => {
-        console.log(error);
+        if(error){
+           console.log(error)
+           setShowError(true)
+        }
       });
   };
   return (
     <div>
       <h2>Sign up</h2>
+      {showError && <p>user already exsit</p>}
       <form action="#">
         <div>
           <label htmlFor="email">Email</label>
