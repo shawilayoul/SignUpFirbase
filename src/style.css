@@ -1,0 +1,97 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+
+.logTypes{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.login-btn, .signUp-btn{
+  background-color: black;
+  color: white;
+}
+
+button[type="submit"] {
+  background-color: #000;
+  color: white;
+}
+
+button.google-signin {
+  background-color: #d14836;
+  color: white;
+}
+
+button.google-signin:hover {
+  background-color: #c53727;
+}
+
+
+button.logout {
+  background-color: #000;
+  color: white;
+}
+
+.sign-container {
+  background-color: gainsboro;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+form div {
+  display: flex;
+  width: 100%;
+
+}
+
+.loginBtn,
+.signUpBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.loginBtn .signUpBtn,
+button {
+  padding: 5px;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0;
+}
+
+input {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.useImage img{
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
